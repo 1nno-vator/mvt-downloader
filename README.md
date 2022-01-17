@@ -4,11 +4,11 @@ mvt downloader &amp; directory distributor
 
 개발사양: Java 11 + Maven + Mac OS(영향X)
 
-##### mvt-downloader-static - [MVT파일 다운로드 모듈]
+#### mvt-downloader-static - [MVT파일 다운로드 모듈]
 사전작업: 크롬 브라우저 설정에서 다운로드 폴더 지정 & '다운로드 전에 각 파일의 저장 위치 확인' 체크 해제
 사용법: 화면 내 input box들에 z, x, y 입력 후 다운로드 시작 버튼 클릭. 자동으로 크롬 다운로드 지정 폴더로 파일이 저장된다.
 
-##### mvt-distributor - [MVT파일 폴더 구조(Z/X/Y.mvt 구조) 생성 모듈]
+#### mvt-distributor - [MVT파일 폴더 구조(Z/X/Y.mvt 구조) 생성 모듈]
 config 폴더 내에 config.properties 파일 수정
 path=크롬 다운로드 폴더 경로
 extension=타겟 확장자
