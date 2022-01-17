@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .control-div {
+            text-align: center;
+            font-size: 11px;
+        }
+    </style>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+            domEventRegister();
+        })
+
+        function domEventRegister() {
+            document.getElementById('download-btn').addEventListener('click', ()=> {
+                makeList();
+            })
+        }
+
+        async function makeList() {
+
+            let z = document.getElementById('input-z').value; // zoom level
+            let [x, xLimit] = [document.getElementById('input-min-x').value, document.getElementById('input-max-x').value]; // x range
+            let [y, yLimit] = [document.getElementById('input-min-y').value, document.getElementById('input-max-y').value]; // y range
+
+            if (z == "" || x == "" || xLimit == "" || y == "" || yLimit == "") {
+                return alert('빠진 값이 있습니다.')
+            }
+
+            let isConfirm = confirm(`입력값은 Z: ${z} / X: ${x} ~ ${xLimit} / Y: ${y} ~ ${yLimit} 입니다.\n 다운로드를 진행합니까?`)
+
+            if (!isConfirm) {
+                return;
+            }
+            
+            for (; x<xLimit; x++) {
+                for (let sy=y; sy<yLimit; sy++) {
+                    let requestURL = `https://tiles-c.basemaps.cartocdn.com/vectortiles/carto.streets/v1/${z}/${x}/${sy}.mvt`
+                    let fileName = `${z}_${x}_${sy}.mvt`;
+                    
+                    let fetchFunction = await fetch(requestURL, {mode: 'cors'})
+                    .then(resp => resp.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        // the filename you want
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        console.log(`download! ${requestURL}`); // or you know, something with better UX...
+                        delay(1);
+                    })
+                    .catch(() => console.log(`download error! ${requestURL}`));
+
+                }
+            }
+            
+        }
+
+        function delay(time) {
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
+
+
+
+    </script>
+</head>
+<body>
+
+    <div class="control-div">
+        
+        <div style="margin-top: 25px;">
+            <label for="input-z">Z: </label>
+            <input id="input-z" type="number" placeholder="z 입력"/>
+        </div>
+        <br/>
+        <div>
+            <label for="input-min-x">X 범위: </label>
+            <input id="input-min-x" type="number" placeholder="최소 X"/>
+            <input id="input-max-x" type="number" placeholder="최대 X"/>
+        </div>
+        <br/>
+        <div>
+            <label for="input-min-y">Y 범위: </label>
+            <input id="input-min-y" type="number" placeholder="최소 Y"/>
+            <input id="input-max-y" type="number" placeholder="최대 Y"/>
+        </div>
+        <br/>
+        
+        <button id="download-btn" style="padding: 25px; background: skyblue; border: none; border-radius: 15px;">다운로드 시작</button>
+    </div>
+    
+
+    <div id="list">
+
+    </div>
+    
+</body>
+</html>
